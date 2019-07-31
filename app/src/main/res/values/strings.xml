@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">smartParkingCopenhagen</string>
+    <string name="register">Register</string>
+    <string name="login">Log In</string>
+    <string name="email_user">Username</string>
+    <string name="password_user">Password</string>
+    <string name="zone_parking">Parking zone</string>
+    <string name="distance_parking">Distance</string>
+    <string name="booking_parking">Book</string>
+    <string name="lista">List</string>
+    <string name="crear">Create</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
