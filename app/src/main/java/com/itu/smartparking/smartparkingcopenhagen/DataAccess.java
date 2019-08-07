@@ -65,6 +65,18 @@ public class DataAccess {
         }
     }
 
+    public Parking getParking(UUID id){
+        ParkingCursorWrapper cursor = queryParking(ParkingDbSchema.ParkingTable.Cols.UUID + " = ?",
+                new String[] { id.toString() }
+        );
+        try {
+            if (cursor.getCount() == 0) return null;
+            cursor.moveToFirst();
+            return cursor.getParking();
+        } finally {
+            cursor.close();
+        }
+    }
 
     public List<Parking> getParkings(){
         List<Parking> parkings = new ArrayList<>();
@@ -115,8 +127,10 @@ public class DataAccess {
     private static ContentValues getContentParkingValues(Parking parking) {
         ContentValues values = new ContentValues();
         values.put(ParkingDbSchema.ParkingTable.Cols.UUID, parking.getId().toString());
-        values.put(ParkingDbSchema.ParkingTable.Cols.ZONE, parking.getZone());
-        values.put(ParkingDbSchema.ParkingTable.Cols.DISTANCE, parking.getDistance());
+        values.put(ParkingDbSchema.ParkingTable.Cols.NAME, parking.getName());
+        values.put(ParkingDbSchema.ParkingTable.Cols.LATITUDE, parking.getLatitude());
+        values.put(ParkingDbSchema.ParkingTable.Cols.LONGITUDE, parking.getLongitude());
+        values.put(ParkingDbSchema.ParkingTable.Cols.AVAILABILITY, parking.getAvailability());
         values.put(ParkingDbSchema.ParkingTable.Cols.PHOTO, parking.getPhoto());
         return values;
     }

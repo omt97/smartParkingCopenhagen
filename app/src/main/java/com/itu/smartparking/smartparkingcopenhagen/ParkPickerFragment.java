@@ -1,15 +1,20 @@
 package com.itu.smartparking.smartparkingcopenhagen;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,7 +22,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
 
-public class Fragment_selection extends Fragment {
+public class ParkPickerFragment extends DialogFragment {
 
     private ImageView photo;
     private TextView name;
@@ -29,28 +34,38 @@ public class Fragment_selection extends Fragment {
 
     private Parking mParking;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
+    private static final String ARG_ID = "id";
+    private DatePicker mDatePicker;
+
+    public static final String EXTRA_PARK =
+            "com.itu.smartparking.smartparkingcopenhage.park";
+
+    public static ParkPickerFragment newInstance(UUID id) {
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_ID, id);
+        ParkPickerFragment fragment = new ParkPickerFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
 
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_selection, container, false);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        View view = LayoutInflater.from(getActivity())
+                .inflate(R.layout.fragment_item, null);
+
+        UUID id = (UUID) getArguments().getSerializable(ARG_ID);
 
         da = new DataAccess(getContext());
-        mParking = da.getParking(((Map) getActivity()).getId());
+        mParking = da.getParking(id);
 
-        photo = view.findViewById(R.id.imageView);
-        name = view.findViewById(R.id.item_name);
-        zone = view.findViewById(R.id.item_zone);
-        distance = view.findViewById(R.id.item_distance);
-        book = view.findViewById(R.id.item_book);
+        photo = view.findViewById(R.id.imageView_i);
+        zone = view.findViewById(R.id.item_zone_i);
+        distance = view.findViewById(R.id.item_distance_i);
 
         if (mParking.getPhoto() != null) photo.setImageBitmap(BitmapFactory.decodeByteArray(mParking.getPhoto() , 0, mParking.getPhoto().length));
-        System.out.println(mParking.getName());
-        name.setText(mParking.getName());
         zone.setText(getAddress(mParking.getLongitude(), mParking.getLatitude()));
         Location loc1 = new Location("");
         loc1.setLatitude(mParking.getLatitude());
@@ -63,7 +78,28 @@ public class Fragment_selection extends Fragment {
         double distanceInMeters = loc1.distanceTo(loc2);
         distance.setText(Double.toString(distanceInMeters));
 
-        return view;
+        return new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .setTitle(mParking.getName())
+                .setPositiveButton(R.string.booking_parking, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendResult(Activity.RESULT_OK, true);
+                    }
+                })
+                .create();
+
+
+    }
+
+    private void sendResult(int resultCode, boolean show) {
+        if (getTargetFragment() == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_PARK, show);
+        getTargetFragment()
+                .onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 
     private String getAddress(double longitude, double latitude) {
@@ -83,4 +119,5 @@ public class Fragment_selection extends Fragment {
         } catch (IOException ex) { }
         return stringBuilder.toString();
     }
+
 }

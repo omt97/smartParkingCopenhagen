@@ -15,10 +15,12 @@ public class ParkingCursorWrapper extends CursorWrapper {
 
     public Parking getParking() {
         UUID id = UUID.fromString(getString(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.UUID)));
-        String zone = getString(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.ZONE));
-        int distance = getInt(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.DISTANCE));
+        String name = getString(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.NAME));
+        double latitude = getDouble(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.LATITUDE));
+        double longitude = getDouble(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.LONGITUDE));
+        int availability = getInt(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.AVAILABILITY));
         byte[] photo = getBlob(getColumnIndex(ParkingDbSchema.ParkingTable.Cols.PHOTO));
-        return new Parking(id, zone, distance, photo);
+        return new Parking(id, name, latitude, longitude, availability, photo);
     }
 
 }

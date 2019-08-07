@@ -6,8 +6,13 @@
     <string name="password_user">Password</string>
     <string name="zone_parking">Parking zone</string>
     <string name="distance_parking">Distance</string>
-    <string name="booking_parking">Book</string>
+    <string name="booking_parking">Guide</string>
     <string name="lista">List</string>
     <string name="crear">Create</string>
     <string name="title_activity_maps">Map</string>
+    <string name="mapa">Map</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="availability">Availability</string>
+    <string name="name">Name</string>
 </resources>

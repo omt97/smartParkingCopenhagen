@@ -26,8 +26,10 @@ public class Fragment_create extends Fragment {
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private ImageView parking_image;
-    private EditText zone;
-    private EditText distance;
+    private EditText name;
+    private EditText latitude;
+    private EditText longitude;
+    private EditText availablity;
     private Button create;
 
     private File photoFile;
@@ -48,8 +50,10 @@ public class Fragment_create extends Fragment {
         View v = inflater.inflate(R.layout.fragment_create, container, false);
 
         parking_image = v.findViewById(R.id.imageView2);
-        zone = v.findViewById(R.id.zone_create);
-        distance = v.findViewById(R.id.distance_create);
+        name = v.findViewById(R.id.name_create);
+        latitude = v.findViewById(R.id.lat_create);
+        longitude = v.findViewById(R.id.long_create);
+        availablity = v.findViewById(R.id.ava_create);
         create = v.findViewById(R.id.create_button);
 
         parking_image.setOnClickListener(new View.OnClickListener() {
@@ -65,8 +69,8 @@ public class Fragment_create extends Fragment {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if ((zone.getText().length() > 0) && (distance.getText().length() > 0)){
-                    Parking parking = new Parking(zone.getText().toString(), Integer.parseInt(distance.getText().toString()), image);
+                if ((latitude.getText().length() > 0) && (latitude.getText().length() > 0) && (availablity.getText().length() > 0) && (name.getText().length() > 0)){
+                    Parking parking = new Parking(name.getText().toString(), Double.parseDouble(latitude.getText().toString()), Double.parseDouble(longitude.getText().toString()), Integer.parseInt(availablity.getText().toString()), image);
                     da.addParking(parking);
                     getActivity().finish();
                 }

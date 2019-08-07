@@ -15,8 +15,10 @@ public class ParkingDbSchema {
         public static final String NAME = "parkings";
         public static final class Cols {
             public static final String UUID = "uuid";
-            public static final String ZONE = "zone";
-            public static final String DISTANCE = "distance";
+            public static final String NAME = "name";
+            public static final String LATITUDE = "latitude";
+            public static final String LONGITUDE = "longitude";
+            public static final String AVAILABILITY = "availability";
             public static final String PHOTO = "photo";
         }
     }
