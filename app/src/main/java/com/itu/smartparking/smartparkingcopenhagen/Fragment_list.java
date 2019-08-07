@@ -24,12 +24,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import static android.app.Activity.RESULT_OK;
+
 public class Fragment_list extends Fragment {
 
     private static final String EXTRA_LATITUDE =
             "com.itu.smartparking.smartparkingcopenhagen.latitude";
     private static final String EXTRA_LONGITUDE =
             "com.itu.smartparking.smartparkingcopenhagen.longitude";
+    public static final String EXTRA_LAT =
+            "com.itu.smartparking.smartparkingcopenhagen.lat";
+    public static final String EXTRA_LNG =
+            "com.itu.smartparking.smartparkingcopenhagen.lng";
 
     private RecyclerView mListRecyclerView;
     private Button map;
@@ -39,6 +45,8 @@ public class Fragment_list extends Fragment {
 
     private double actLatitude;
     private double actLongitude;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +83,13 @@ public class Fragment_list extends Fragment {
         });
 
         return view;
+    }
+
+    private void setAnswerShownResult(double lat, double lng) {
+        Intent data = new Intent();
+        data.putExtra(EXTRA_LAT, lat);
+        data.putExtra(EXTRA_LNG, lng);
+        getActivity().setResult(RESULT_OK, data);
     }
 
     private void updateUI() {
@@ -120,6 +135,14 @@ public class Fragment_list extends Fragment {
 
             double distanceInMeters = loc1.distanceTo(loc2);
             distance.setText(Double.toString(distanceInMeters));
+
+            book.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setAnswerShownResult(mParking.getLatitude(), mParking.getLongitude());
+                    getActivity().finish();
+                }
+            });
         }
 
         private String getAddress(double longitude, double latitude) {

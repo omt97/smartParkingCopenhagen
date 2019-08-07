@@ -60,6 +60,7 @@ public class Fragment_map extends Fragment {
     private static final String DIALOG_PARK = "DialogPark";
 
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_LATLNG = 1;
 
     private ArrayList<String> mPermissions = new ArrayList<>();
     private static final int ALL_PERMISSIONS_RESULT = 1011;
@@ -167,7 +168,7 @@ public class Fragment_map extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = List.newIntent(getActivity(), latitude, longitude);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_LATLNG);
             }
         });
 
@@ -330,6 +331,28 @@ public class Fragment_map extends Fragment {
                 }
                // map.addPolyline(lineOptions);
             }
+        }
+        if (requestCode == REQUEST_LATLNG){
+            double lat = (Double) data
+                    .getSerializableExtra(Fragment_list.EXTRA_LAT);
+
+            double lng = (Double) data
+                    .getSerializableExtra(Fragment_list.EXTRA_LNG);
+
+                if (polyline != null) polyline.remove();
+
+                String url = getDirectionsUrl(new LatLng(latitude, longitude), new LatLng(lat, lng));
+
+                DownloadTask downloadTask = new DownloadTask();
+                // downloadTask.execute(url);
+                try {
+                    Object str_result= downloadTask.execute(url).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                // map.addPolyline(lineOptions);
         }
     }
 
