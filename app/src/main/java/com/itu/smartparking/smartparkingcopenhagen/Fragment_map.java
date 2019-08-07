@@ -35,6 +35,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -85,6 +86,8 @@ public class Fragment_map extends Fragment {
     public PolylineOptions lineOptions = null;
 
     private java.util.List<Parking> parkings;
+
+    private Polyline polyline = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -311,6 +314,9 @@ public class Fragment_map extends Fragment {
             boolean show = (boolean) data
                     .getSerializableExtra(ParkPickerFragment.EXTRA_PARK);
             if (show) {
+
+                if (polyline != null) polyline.remove();
+
                 String url = getDirectionsUrl(new LatLng(latitude, longitude), new LatLng(actLat, actLong));
 
                 DownloadTask downloadTask = new DownloadTask();
@@ -322,18 +328,11 @@ public class Fragment_map extends Fragment {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-                addPoly();
+               // map.addPolyline(lineOptions);
             }
         }
     }
 
-    public void addPoly() {
-        System.out.println(lineOptions.getPoints().toString());
-        for (int i = 0; i < lineOptions.getPoints().size(); ++i){
-            System.out.println(lineOptions.getPoints().get(i));
-        }
-        map.addPolyline(lineOptions);
-    }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
@@ -369,106 +368,41 @@ public class Fragment_map extends Fragment {
         return url;
     }
 
-    private class DownloadTask extends AsyncTask {
+    private class DownloadTask extends AsyncTask<String, Integer, String> {
 
+
+        @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
             ParserTask parserTask = new ParserTask();
-            System.out.println(5);
-            //parserTask.execute(result);
-
-            System.out.println(7);
-            JSONObject jObject;
-            java.util.List<java.util.List<HashMap<String, String>>> routes = null;
-            java.util.List<java.util.List<HashMap>> rut = null;
-            System.out.println(8);
-            try {
-                System.out.println(9);
-                jObject = new JSONObject(result);
-                boolean found = false;
-                System.out.println(10);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-                System.out.println(11);
-                routes = parser.parse(jObject);
-                System.out.println(routes.toString());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            System.out.println(12);
-            onPostExecute2(routes);
-
-        }
 
 
-        protected void onPostExecute2(java.util.List<java.util.List<HashMap<String, String>>> result) {
-            System.out.println(14);
-            ArrayList points = null;
-            PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            System.out.println(result.size());
-            System.out.println(15);
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList();
-                lineOptions = new PolylineOptions();
-                System.out.println(16);
+            parserTask.execute(result);
 
-                java.util.List<HashMap<String, String>> path = result.get(i);
-
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap point = path.get(j);
-                    System.out.println(17);
-                    double lat = Double.parseDouble((String) point.get("lat"));
-                    double lng = Double.parseDouble((String) point.get("lng"));
-                    System.out.println(lat + " + " + lng);
-                    LatLng position = new LatLng(lat, lng);
-
-                    points.add(position);
-                }
-                System.out.println(18);
-                lineOptions.addAll(points);
-                //lineOptions.width(12);
-                //lineOptions.color(Color.RED);
-                //lineOptions.geodesic(true);
-
-            }
-            map.addPolyline(new PolylineOptions()
-                    .clickable(true)
-                    .add(
-                            new LatLng(-35.016, 143.321),
-                            new LatLng(-34.747, 145.592),
-                            new LatLng(-34.364, 147.891),
-                            new LatLng(-33.501, 150.217),
-                            new LatLng(-32.306, 149.248),
-                            new LatLng(-32.491, 147.309)));
-            //addPoly();
-// Drawing polyline in the Google Map for the i-th route
-                /*System.out.println(map.toString());
-                */
         }
 
         @Override
-        protected Object doInBackground(Object[] url) {
+        protected String doInBackground(String... url) {
             String data = "";
             System.out.println(1);
             try {
                 System.out.println(2);
-                data = downloadUrl((String) url[0]);
+                data = downloadUrl(url[0]);
                 System.out.println(3);
             } catch (Exception e) {
                 Log.d("Background Task", e.toString());
             }
             System.out.println(4);
-            onPostExecute(data);
             return data;
         }
     }
 
-        private class ParserTask extends AsyncTask<String, Integer, java.util.List<java.util.List<HashMap>>> {
+        private class ParserTask extends AsyncTask<String, Integer, java.util.List<java.util.List<HashMap<String, String>>>> {
 
             // Parsing the data in non-ui thread
             @Override
-            protected java.util.List<java.util.List<HashMap>> doInBackground(String... jsonData) {
+            protected java.util.List<java.util.List<HashMap<String, String>>> doInBackground(String... jsonData) {
                 System.out.println(7);
                 JSONObject jObject;
                 java.util.List<java.util.List<HashMap<String, String>>> routes = null;
@@ -487,12 +421,11 @@ public class Fragment_map extends Fragment {
                     e.printStackTrace();
                 }
                 System.out.println(12);
-                onPostExecute(routes);
                 System.out.println(13);
-                return rut;
+                return routes;
             }
 
-
+            @Override
             protected void onPostExecute(java.util.List<java.util.List<HashMap<String, String>>> result) {
                 System.out.println(14);
                 ArrayList points = null;
@@ -519,11 +452,12 @@ public class Fragment_map extends Fragment {
                     }
                     System.out.println(18);
                     lineOptions.addAll(points);
-                    //lineOptions.width(12);
-                    //lineOptions.color(Color.RED);
-                    //lineOptions.geodesic(true);
+                    lineOptions.width(12);
+                    lineOptions.color(Color.RED);
+                    lineOptions.geodesic(true);
 
                 }
+                polyline = map.addPolyline(lineOptions);
                 //addPoly();
 // Drawing polyline in the Google Map for the i-th route
                 /*System.out.println(map.toString());
