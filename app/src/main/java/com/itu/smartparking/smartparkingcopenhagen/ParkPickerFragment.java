@@ -76,8 +76,8 @@ public class ParkPickerFragment extends DialogFragment {
         loc2.setLongitude(((Map) getActivity()).getActLong());
 
         double distanceInMeters = loc1.distanceTo(loc2);
-        distance.setText(Double.toString(distanceInMeters));
-
+        //distance.setText(Double.toString(distanceInMeters));
+        distance.setText(Integer.toString(mParking.getAvailability()) + "%");
         return new AlertDialog.Builder(getActivity())
                 .setView(view)
                 .setTitle(mParking.getName())

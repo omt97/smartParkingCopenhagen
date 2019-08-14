@@ -37,15 +37,15 @@ public class Fragment_selection extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_selection, container, false);
+        View view = inflater.inflate(R.layout.fragment_item, container, false);
 
         da = new DataAccess(getContext());
         mParking = da.getParking(((Map) getActivity()).getId());
 
         photo = view.findViewById(R.id.imageView);
         name = view.findViewById(R.id.item_name);
-        zone = view.findViewById(R.id.item_zone);
-        distance = view.findViewById(R.id.item_distance);
+        zone = view.findViewById(R.id.item_zone_i);
+        distance = view.findViewById(R.id.item_distance_i);
         book = view.findViewById(R.id.item_book);
 
         if (mParking.getPhoto() != null) photo.setImageBitmap(BitmapFactory.decodeByteArray(mParking.getPhoto() , 0, mParking.getPhoto().length));
@@ -61,7 +61,8 @@ public class Fragment_selection extends Fragment {
         loc2.setLongitude(((Map) getActivity()).getActLong());
 
         double distanceInMeters = loc1.distanceTo(loc2);
-        distance.setText(Double.toString(distanceInMeters));
+      //  distance.setText(Double.toString(distanceInMeters));
+        distance.setText(mParking.getAvailability());
 
         return view;
     }
